@@ -58,7 +58,7 @@ df = df[df['year'] <= 2019]
 groups = pd.read_csv("../../results/cluster_analysis/sec_add_groups.csv")
 df = df.merge(groups, on="area", how="inner")
 df['treated'] = df['group'].map({'treated': 1, 'control': 0})
-df['post2015'] = df['year'].apply(lambda x: 1 if x >= 2015 else 0)
+df['post2015'] = df['year'].apply(lambda x: 1 if x >= 2016 else 0)
 df['treated_post'] = df['treated'] * df['post2015']
 
 # --- Pre/Post Trend Plot ---
