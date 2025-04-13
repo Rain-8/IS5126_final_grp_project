@@ -71,7 +71,7 @@ plt.show()
 # --- Pre-2015 Avg SO₂ Emissions Line Plot for Treated vs Control ---
 
 # Filter for pre-2015
-pre_policy_df = df[df['year'] < 2015]
+pre_policy_df = df[(df['year'] >= 2009) & (df['year'] < 2015)]
 
 # Merge treatment group info
 pre_policy_df = pre_policy_df.merge(region_emissions[['area', 'group']], on='area', how='left')
@@ -123,6 +123,7 @@ print("Loading treatment group assignments...")
 assignments = pd.read_csv("../../results/cluster_analysis/region_treatment_groups.csv")  # From k-means output
 
 #  Merge on region (area)
+df = df[df['year'] >= 2009]
 df = df.merge(assignments, how="left", left_on="area", right_on="area")
 
 # Keep necessary columns
