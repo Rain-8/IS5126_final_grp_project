@@ -126,5 +126,32 @@ plt.tight_layout()
 plt.savefig(os.path.join(save_dir, "did_prediction_treated_group.png"), dpi=300, bbox_inches='tight')
 plt.show()
 
+# Show city-cluster mapping
+df_grouped[['area', 'Cluster']]
+
+# Show city-cluster mapping
+df_grouped[['area', 'Cluster']]
+
+print("Plotting average trends by cluster...")
+df_full = df.copy()
+df_full = df_full.merge(df_grouped[['area', 'Cluster']], on="area", how="left")
+df_full['post'] = df_full['year'].apply(lambda x: 1 if x >= 2015 else 0)
+
+agg_cluster = df_full.groupby(['year', 'Cluster'])[target_feature].mean().reset_index()
+
+
+plt.figure(figsize=(10, 6))
+sns.lineplot(data=agg_cluster, x='year', y=target_feature, hue='Cluster', palette="Set2", marker='o')
+plt.axvline(2015, color='red', linestyle='--', label='Policy Year (2015)')
+plt.title(f"{target_feature} Trend by Treatment Cluster")
+plt.ylabel(target_feature)
+plt.grid(True)
+plt.legend()
+plt.tight_layout()
+save_dir = "../../results/cluster_analysis"
+os.makedirs(save_dir, exist_ok=True)
+plt.savefig(os.path.join(save_dir, "post_secondary_industry_treated_vs_control.png"), dpi=300, bbox_inches='tight')
+plt.show()
+
 
 

@@ -85,6 +85,4 @@ plt.savefig(os.path.join(save_dir, "pollution_clusters.png"), bbox_inches='tight
 
 plt.show()
 
-# Show city-cluster mapping
-df_grouped[['area', 'Cluster']]
 
