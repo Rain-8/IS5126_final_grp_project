@@ -54,8 +54,8 @@ plt.hist(
     region_emissions[region_emissions['group'] == 'control']['avg_pre2015_emissions'],
     bins=30, alpha=0.7, label='Control', color='blue'
 )
-plt.title("Pre-2015 Emissions: Treated vs Control Regions")
-plt.xlabel("Average SO₂ Emissions (ton)")
+plt.title("Pre-2015 Production: Treated vs Control Regions")
+plt.xlabel("Average SO₂ Production (ton)")
 plt.ylabel("Number of Regions")
 plt.legend()
 plt.grid(True)
@@ -86,9 +86,9 @@ for grp in pre_yearly_avg['group'].unique():
     plt.plot(subset['year'], subset['Industrial sulfur dioxide production (ton)'],
              marker='o', label=grp.title())
 
-plt.title("Pre-2015 Average SO₂ Emissions Over Time by Group")
+plt.title("Pre-2015 Average SO₂ Production Over Time by Group")
 plt.xlabel("Year")
-plt.ylabel("Avg SO₂ Emissions (ton)")
+plt.ylabel("Avg SO₂ Production (ton)")
 plt.grid(True)
 plt.legend()
 plt.tight_layout()
@@ -164,7 +164,7 @@ df['treated_post'] = df['treated'] * df['post2015']
 target_emission = "Industrial sulfur dioxide production (ton)"
 
 # Plot Pre/Post Emission Trends
-print(" Plotting SO₂ emission trends...")
+print(" Plotting SO₂ production trends...")
 agg = df.groupby(['year', 'group'])[target_emission].mean().reset_index()
 
 plt.figure(figsize=(10,6))
@@ -173,9 +173,9 @@ for grp in agg['group'].unique():
     plt.plot(subset['year'], subset[target_emission], marker='o', label=grp.title())
 
 plt.axvline(x=2015, color='gray', linestyle='--', label='Policy Year (2015)')
-plt.title("SO₂ Emissions: Treated vs Control Regions")
+plt.title("SO₂ Production: Treated vs Control Regions")
 plt.xlabel("Year")
-plt.ylabel("SO₂ Emissions (ton)")
+plt.ylabel("SO₂ Production (ton)")
 plt.legend()
 plt.grid(True)
 plt.tight_layout()

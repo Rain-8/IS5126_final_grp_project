@@ -1,0 +1,5 @@
+Feature 1,Feature 2,Correlation
+Value added of the tertiary industry (10000 yuan),Regional Gross Domestic Product (RMB 10000),0.9522520875063039
+Value added of the secondary industry (10000 yuan),Regional Gross Domestic Product (RMB 10000),0.9225673509563386
+Value added of the tertiary industry (10000 yuan),Value added of the secondary industry (10000 yuan),0.8553589757403016
+Industrial wastewater discharge reaches the standard (10000 tons),Industrial wastewater discharge volume (10000 tons),0.803664893278158
