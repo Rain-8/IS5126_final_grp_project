@@ -58,7 +58,7 @@ df = df[df['year'] <= 2019]
 groups = pd.read_csv("../../results/cluster_analysis/sec_add_groups.csv")
 df = df.merge(groups, on="area", how="inner")
 df['treated'] = df['group'].map({'treated': 1, 'control': 0})
-df['post2015'] = df['year'].apply(lambda x: 1 if x >= 2015 else 0)
+df['post2015'] = df['year'].apply(lambda x: 1 if x >= 2016 else 0)
 df['treated_post'] = df['treated'] * df['post2015']
 
 # --- Pre/Post Trend Plot ---
@@ -106,6 +106,26 @@ print(f"\nEstimated Policy Effect (ATT): {att:.2f}" if att is not None else "No 
 #     print(panel_model.summary())
 # else:
 #     print("GDP feature not found for panel regression.")
+
+# Predict using the DiD model
+df_treat['DiD_Predicted'] = did_model.predict(df_treat)
+
+# Plot actual vs predicted for treated group
+treated_plot = df_treat[df_treat['treated'] == 1].groupby('year')[[target_feature, 'DiD_Predicted']].mean().reset_index()
+
+plt.figure(figsize=(10,6))
+plt.plot(treated_plot['year'], treated_plot[target_feature], label='Actual (Treated)', marker='o')
+plt.plot(treated_plot['year'], treated_plot['DiD_Predicted'], label='DiD Predicted', linestyle='--', marker='x')
+plt.axvline(2015, color='gray', linestyle='--', label='Policy Year (2015)')
+plt.title("Actual vs DiD Predicted (Treated Group)")
+plt.xlabel("Year")
+plt.ylabel(target_feature)
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.savefig(os.path.join(save_dir, "did_prediction_treated_group.png"), dpi=300, bbox_inches='tight')
+plt.show()
+
 
 
 features = [
