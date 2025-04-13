@@ -96,16 +96,16 @@ att = did_model.params.get("treated_post", None)
 print(f"\nEstimated Policy Effect (ATT): {att:.2f}" if att is not None else "No ATT coefficient found.")
 
 # --- Multivariate Panel Regression with GDP ---
-if "Regional Gross Domestic Product (RMB 10000)" in df.columns:
-    print("\nRunning panel regression with GDP control...")
-    df_panel = df.dropna(subset=[target_feature, "Regional Gross Domestic Product (RMB 10000)"])
-    panel_model = smf.ols(
-        formula=f"Q('{target_feature}') ~ treated + post2015 + treated_post + Q('Regional Gross Domestic Product (RMB 10000)') + C(year)",
-        data=df_panel
-    ).fit()
-    print(panel_model.summary())
-else:
-    print("GDP feature not found for panel regression.")
+# if "Regional Gross Domestic Product (RMB 10000)" in df.columns:
+#     print("\nRunning panel regression with GDP control...")
+#     df_panel = df.dropna(subset=[target_feature, "Regional Gross Domestic Product (RMB 10000)"])
+#     panel_model = smf.ols(
+#         formula=f"Q('{target_feature}') ~ treated + post2015 + treated_post + Q('Regional Gross Domestic Product (RMB 10000)') + C(year)",
+#         data=df_panel
+#     ).fit()
+#     print(panel_model.summary())
+# else:
+#     print("GDP feature not found for panel regression.")
 
 
 features = [
