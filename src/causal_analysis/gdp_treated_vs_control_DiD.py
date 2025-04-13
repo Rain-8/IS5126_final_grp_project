@@ -58,7 +58,7 @@ df = df[df['year'] <= 2019]
 groups = pd.read_csv("../../results/cluster_analysis/sec_add_groups.csv")
 df = df.merge(groups, on="area", how="inner")
 df['treated'] = df['group'].map({'treated': 1, 'control': 0})
-df['post2015'] = df['year'].apply(lambda x: 1 if x >= 2016 else 0)
+df['post2015'] = df['year'].apply(lambda x: 1 if x >= 2015 else 0)
 df['treated_post'] = df['treated'] * df['post2015']
 
 # --- Pre/Post Trend Plot ---
@@ -96,16 +96,16 @@ att = did_model.params.get("treated_post", None)
 print(f"\nEstimated Policy Effect (ATT): {att:.2f}" if att is not None else "No ATT coefficient found.")
 
 # --- Multivariate Panel Regression with GDP ---
-# if "Regional Gross Domestic Product (RMB 10000)" in df.columns:
-#     print("\nRunning panel regression with GDP control...")
-#     df_panel = df.dropna(subset=[target_feature, "Regional Gross Domestic Product (RMB 10000)"])
-#     panel_model = smf.ols(
-#         formula=f"Q('{target_feature}') ~ treated + post2015 + treated_post + Q('Regional Gross Domestic Product (RMB 10000)') + C(year)",
-#         data=df_panel
-#     ).fit()
-#     print(panel_model.summary())
-# else:
-#     print("GDP feature not found for panel regression.")
+if "Regional Gross Domestic Product (RMB 10000)" in df.columns:
+    print("\nRunning panel regression with GDP control...")
+    df_panel = df.dropna(subset=[target_feature, "Regional Gross Domestic Product (RMB 10000)"])
+    panel_model = smf.ols(
+        formula=f"Q('{target_feature}') ~ treated + post2015 + treated_post + Q('Regional Gross Domestic Product (RMB 10000)') + C(year)",
+        data=df_panel
+    ).fit()
+    print(panel_model.summary())
+else:
+    print("GDP feature not found for panel regression.")
 
 # Predict using the DiD model
 df_treat['DiD_Predicted'] = did_model.predict(df_treat)
@@ -126,11 +126,33 @@ plt.tight_layout()
 plt.savefig(os.path.join(save_dir, "did_prediction_treated_group.png"), dpi=300, bbox_inches='tight')
 plt.show()
 
-# Show city-cluster mapping
-df_grouped[['area', 'Cluster']]
 
-# Show city-cluster mapping
-df_grouped[['area', 'Cluster']]
+
+features = [
+    # "Industrial sulfur dioxide production (ton)",
+    # "Industrial nitrogen oxide emissions (tons)",
+    # "Annual average concentration of inhalable fine particulate matter (micrograms/cubic meter)",
+    "Industrial wastewater discharge volume (10000 tons)",
+    "Industrial smoke and dust emissions (ton)",
+    "Industrial electricity consumption (10000 kWh)"
+    # "Comprehensive utilization rate of general industrial solid waste (%)"
+]
+
+# Drop NA values
+df_cluster = df[['area', 'year'] + features].dropna()
+
+# Average over years (per city)
+df_grouped = df_cluster.groupby('area')[features].mean().reset_index()
+
+# Scale features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(df_grouped[features])
+
+# Run KMeans clustering
+k = 2  # You can test different values
+kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
+df_grouped['Cluster'] = kmeans.fit_predict(X_scaled)
+
 
 print("Plotting average trends by cluster...")
 df_full = df.copy()
@@ -152,6 +174,3 @@ save_dir = "../../results/cluster_analysis"
 os.makedirs(save_dir, exist_ok=True)
 plt.savefig(os.path.join(save_dir, "post_secondary_industry_treated_vs_control.png"), dpi=300, bbox_inches='tight')
 plt.show()
-
-
-
